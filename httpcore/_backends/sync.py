@@ -129,9 +129,9 @@ class SyncStream(NetworkStream):
         try:
             self._sock.settimeout(timeout)
             return self._sock.recv(max_bytes)
-        except socket.timeout as exc:
+        except socket.timeout as exc:  # pragma: nocover
             raise ReadTimeout(exc) from exc
-        except OSError as exc:
+        except OSError as exc:  # pragma: nocover
             raise ReadError(exc) from exc
 
     def write(self, buffer: bytes, timeout: float | None = None) -> None:
@@ -143,9 +143,9 @@ class SyncStream(NetworkStream):
                 self._sock.settimeout(timeout)
                 n = self._sock.send(buffer)
                 buffer = buffer[n:]
-        except socket.timeout as exc:
+        except socket.timeout as exc:  # pragma: nocover
             raise WriteTimeout(exc) from exc
-        except OSError as exc:
+        except OSError as exc:  # pragma: nocover
             raise WriteError(exc) from exc
 
     def close(self) -> None:
@@ -174,9 +174,9 @@ class SyncStream(NetworkStream):
             except Exception as exc:  # pragma: nocover
                 self.close()
                 raise exc
-        except socket.timeout as exc:
+        except socket.timeout as exc:  # pragma: nocover
             raise ConnectTimeout(exc) from exc
-        except OSError as exc:
+        except OSError as exc:  # pragma: nocover
             raise ConnectError(exc) from exc
         return SyncStream(sock)
 
@@ -219,9 +219,9 @@ class SyncBackend(NetworkBackend):
             for option in socket_options:
                 sock.setsockopt(*option)  # pragma: no cover
             sock.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
-        except socket.timeout as exc:
+        except socket.timeout as exc:  # pragma: nocover
             raise ConnectTimeout(exc) from exc
-        except OSError as exc:
+        except OSError as exc:  # pragma: nocover
             raise ConnectError(exc) from exc
         return SyncStream(sock)
 

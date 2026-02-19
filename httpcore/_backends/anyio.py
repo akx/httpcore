@@ -28,13 +28,13 @@ class AnyIOStream(AsyncNetworkStream):
                     return await self._stream.receive(max_bytes=max_bytes)
                 except anyio.EndOfStream:  # pragma: nocover
                     return b""
-        except TimeoutError as exc:
+        except TimeoutError as exc:  # pragma: nocover
             raise ReadTimeout(exc) from exc
         except (
             anyio.BrokenResourceError,
             anyio.ClosedResourceError,
             anyio.EndOfStream,
-        ) as exc:
+        ) as exc:  # pragma: nocover
             raise ReadError(exc) from exc
 
     async def write(self, buffer: bytes, timeout: float | None = None) -> None:
@@ -44,9 +44,12 @@ class AnyIOStream(AsyncNetworkStream):
         try:
             with anyio.fail_after(timeout):
                 await self._stream.send(item=buffer)
-        except TimeoutError as exc:
+        except TimeoutError as exc:  # pragma: nocover
             raise WriteTimeout(exc) from exc
-        except (anyio.BrokenResourceError, anyio.ClosedResourceError) as exc:
+        except (
+            anyio.BrokenResourceError,
+            anyio.ClosedResourceError,
+        ) as exc:  # pragma: nocover
             raise WriteError(exc) from exc
 
     async def aclose(self) -> None:
@@ -71,9 +74,13 @@ class AnyIOStream(AsyncNetworkStream):
             except Exception as exc:  # pragma: nocover
                 await self.aclose()
                 raise exc
-        except TimeoutError as exc:
+        except TimeoutError as exc:  # pragma: nocover
             raise ConnectTimeout(exc) from exc
-        except (anyio.BrokenResourceError, anyio.EndOfStream, ssl.SSLError) as exc:
+        except (
+            anyio.BrokenResourceError,
+            anyio.EndOfStream,
+            ssl.SSLError,
+        ) as exc:  # pragma: nocover
             raise ConnectError(exc) from exc
         return AnyIOStream(ssl_stream)
 

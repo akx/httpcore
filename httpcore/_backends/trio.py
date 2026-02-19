@@ -26,9 +26,12 @@ class TrioStream(AsyncNetworkStream):
             with trio.fail_after(timeout_or_inf):
                 data: bytes = await self._stream.receive_some(max_bytes=max_bytes)
                 return data
-        except trio.TooSlowError as exc:
+        except trio.TooSlowError as exc:  # pragma: nocover
             raise ReadTimeout(exc) from exc
-        except (trio.BrokenResourceError, trio.ClosedResourceError) as exc:
+        except (
+            trio.BrokenResourceError,
+            trio.ClosedResourceError,
+        ) as exc:  # pragma: nocover
             raise ReadError(exc) from exc
 
     async def write(self, buffer: bytes, timeout: float | None = None) -> None:
@@ -39,9 +42,12 @@ class TrioStream(AsyncNetworkStream):
         try:
             with trio.fail_after(timeout_or_inf):
                 await self._stream.send_all(data=buffer)
-        except trio.TooSlowError as exc:
+        except trio.TooSlowError as exc:  # pragma: nocover
             raise WriteTimeout(exc) from exc
-        except (trio.BrokenResourceError, trio.ClosedResourceError) as exc:
+        except (
+            trio.BrokenResourceError,
+            trio.ClosedResourceError,
+        ) as exc:  # pragma: nocover
             raise WriteError(exc) from exc
 
     async def aclose(self) -> None:
@@ -68,9 +74,9 @@ class TrioStream(AsyncNetworkStream):
             except Exception as exc:  # pragma: nocover
                 await self.aclose()
                 raise exc
-        except trio.TooSlowError as exc:
+        except trio.TooSlowError as exc:  # pragma: nocover
             raise ConnectTimeout(exc) from exc
-        except trio.BrokenResourceError as exc:
+        except trio.BrokenResourceError as exc:  # pragma: nocover
             raise ConnectError(exc) from exc
         return TrioStream(ssl_stream)
 
@@ -123,9 +129,9 @@ class TrioBackend(AsyncNetworkBackend):
                 )
                 for option in socket_options:
                     stream.setsockopt(*option)  # type: ignore[attr-defined] # pragma: no cover
-        except trio.TooSlowError as exc:
+        except trio.TooSlowError as exc:  # pragma: nocover
             raise ConnectTimeout(exc) from exc
-        except (trio.BrokenResourceError, OSError) as exc:
+        except (trio.BrokenResourceError, OSError) as exc:  # pragma: nocover
             raise ConnectError(exc) from exc
         return TrioStream(stream)
 
